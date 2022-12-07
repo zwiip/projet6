@@ -3,6 +3,8 @@ const app = express();
 const mongoose = require('mongoose');
 require('dotenv').config();
 
+const userRoutes = require('./routes/user');
+
 mongoose.connect((process.env.mongoDB),
   { useNewUrlParser: true,
     useUnifiedTopology: true })
@@ -18,4 +20,6 @@ app.use((req, res, next) => {
     next();
   });
 
+
+  
 module.exports = app;
