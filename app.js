@@ -20,6 +20,6 @@ app.use((req, res, next) => {
     next();
   });
 
-
+app.use('/api/auth', userRoutes);
   
 module.exports = app;
