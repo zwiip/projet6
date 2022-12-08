@@ -6,6 +6,9 @@ const MIME_TYPES = {
     'image/png': 'png'
 };
 
+/**
+ * Permet de récupérer l'image à stocker et de lui attribuer un nom unique
+ */
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
         callback(null, 'images')

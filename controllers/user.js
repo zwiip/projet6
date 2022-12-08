@@ -32,6 +32,7 @@ exports.signup = (req, res, next) => {
  * Vérification des informations d'identification de l'utilisateur,
  * renvoie l _id de l'utilisateur depuis la base de données
  * et un token web JSON signé (contenant également l'_id de l'utilisateur)
+ * messages d'erreurs flous pour ne pas divulguer d'informations
  * @param { email: string, password: string } req 
  * @param { userId: string, token: string } res
  */
