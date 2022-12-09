@@ -119,9 +119,46 @@ exports.deleteSauce = (req, res, next) => {
  * @param { userId: String, like: Number } req 
  * @param { message: String } res 
  */
-exports.likeSauce = (req, res, next) => {
-
+/*exports.likeSauce = (req, res, next) => {
+    if (req.body.like === 1) {
+        Sauce.usersLiked.find()
+         }}*/
+/* NOTES DE TRAVAIL
+if (req.body.like === 1) {
+    est-ce que la personne a déjà liké
+        oui { alert elle ne peut pas reliker
+            return }
+        non { est-ce que la personne a disliké}
+            oui { suppression du dislike id
+                 quantité likes = usersLiked.length
+                quantité dislikes = usersDisliked.length}
+            ajout du like quantité
+            ajout du l'id dans array
 }
+
+if (req.body.like === -1) {
+    est-ce que déjà dislike ? {
+        oui {elle ne peut pas re disliker
+            return}
+        non { est-ce que la personne est dans les likes}
+            oui { suppression du dislike
+                }
+    }
+}
+
+if (req.body.like === 0) {
+    Est-ce qu'il y a un like ?
+        oui { suppression du like }
+        non { est-ce qu'il y a un dislike ? }
+            oui { suppression du dislike }
+            non { alert la sauce est déjà à 0}
+}
+
+
+.push('_id')
+total = total d'id donc .length
+    }
+}*/
 
 
 
