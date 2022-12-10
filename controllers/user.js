@@ -14,18 +14,20 @@ const User = require('../models/user');
  * @param { message: string } res 
  */
 exports.signup = (req, res, next) => {
+    console.log("je rentre dans le middleware")
     brcrypt.hash(req.body.password, 10)
         .then((hash) => {
+            console.log("je rentre dans le then de hash")
             const user = new User({
                 email: req.body.email,
                 password: hash
             });
-            user
-                .save()
-                .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
-                .catch(error => res.status(400).json({ error }))
+            console.log(user);
+            user.save()
+                .then(() => res.status(201).json({message: 'Utilisateur créé !'}))
+                .catch(error => res.status(400).json({error}))
         })
-        .catch(error => res.status(500).json({ error }))
+        .catch(error => res.status(500).json({error}))
 };
 
 /**
