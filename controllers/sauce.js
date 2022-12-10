@@ -119,10 +119,24 @@ exports.deleteSauce = (req, res, next) => {
  * @param { userId: String, like: Number } req 
  * @param { message: String } res 
  */
-/*exports.likeSauce = (req, res, next) => {
+exports.likeSauce = (req, res, next) => {
     if (req.body.like === 1) {
-        Sauce.usersLiked.find()
-         }}*/
+        const likeID = Sauce.usersLiked.includes(req.params.id)
+        if (likeID) {
+            alert('Vous avez déjà liké cette sauce')
+            return
+        } else {
+            const dislikeID = Sauce.usersDisliked.includes(req.params.id)
+            if (dislikeID) {
+                let i = Sauce.usersDisliked.findIndex(dislikeID)
+                Sauce.usersDisliked.splice(i, 1)
+                Sauce.dislikes = Sauce.usersDisliked.length
+            }
+            Sauce.usersLiked.push(req.params.id)
+            Sauce.likes = Sauce.dislikes.length
+        }
+    }
+}
 /* NOTES DE TRAVAIL
 if (req.body.like === 1) {
     est-ce que la personne a déjà liké
@@ -130,10 +144,9 @@ if (req.body.like === 1) {
             return }
         non { est-ce que la personne a disliké}
             oui { suppression du dislike id
-                 quantité likes = usersLiked.length
                 quantité dislikes = usersDisliked.length}
-            ajout du like quantité
             ajout du l'id dans array
+            ajout du like quantité
 }
 
 if (req.body.like === -1) {
