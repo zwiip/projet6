@@ -81,7 +81,7 @@ exports.modifySauce = (req, res, next) => {
 };
 
 /**
- * Supprime la sauce avec l'_id fourni
+ * Supprime la sauce avec l'_id fourni et retire l'image du dossier images
  * @param {-} req 
  * @param { message: String } res 
  */
@@ -102,10 +102,6 @@ exports.deleteSauce = (req, res, next) => {
         .catch(error => {
             res.status(500).json({ error })
         })
-
-    Sauce.deleteOne({ _id: req.params.id })
-        .then(() => res.status(200).json({ message: 'Sauce supprimée !' }))
-        .catch(error => res.status(404).json({ error }))
 }
 
 /**
