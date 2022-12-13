@@ -107,7 +107,7 @@ exports.deleteSauce = (req, res, next) => {
 /**
  * Définit le statut « Like » pour l' userId fourni.
  *  Si like = 1, l'utilisateur aime (= like) la sauce.
- *  Si like = 0, l'utilisateur annule son like ou son dislike.
+ *  Si l'utilisateur annule son like ou son dislike, met le like sur 0
  *  Si like = -1, l'utilisateur n'aime pas (= dislike) la sauce.
  * L'ID de l'utilisateur est ajouté ou retiré du tableau approprié afin de garder une trace de leurs préférences
  * Permet également de les empêche de liker ou de ne pas disliker la même sauce plusieurs fois : un utilisateur ne peut avoir qu'une seule valeur pour chaque sauce.
@@ -116,58 +116,44 @@ exports.deleteSauce = (req, res, next) => {
  * @param { message: String } res 
  */
 exports.likeSauce = (req, res, next) => {
-    if (req.body.like === 1) {
-        const likeID = Sauce.usersLiked.includes(req.params.id)
-        if (likeID) {
-            alert('Vous avez déjà liké cette sauce')
-            return
-        } else {
-            const dislikeID = Sauce.usersDisliked.includes(req.params.id)
-            if (dislikeID) {
-                let i = Sauce.usersDisliked.findIndex(dislikeID)
-                Sauce.usersDisliked.splice(i, 1)
-                Sauce.dislikes = Sauce.usersDisliked.length
+    Sauce.findOne({ _id: req.params.id })
+    .then(sauce => {
+        const likeID = req.body.userId
+        res.status(200).json(sauce);
+        
+        if (req.body.like === 1) {
+            console.log("ID du liker : ", likeID)
+            if (sauce.usersLiked.includes(likeID)) {
+                console.log('a déjà liké')
+                let index = sauce.usersLiked.findIndex(id => id === likeID)
+                sauce.usersLiked.splice(index, 1)
+                sauce.likes --
+                console.log('Annulation du like, IDs des likers restants : ', sauce.usersLiked, 'nombre de likes', sauce.likes)
+                sauce.save()
+            } else {
+                sauce.usersLiked.push(likeID)
+                sauce.likes ++
+                console.log('ajout du like, IDs des likers : ', sauce.usersLiked, 'nombre de likes : ', sauce.likes)
+                sauce.save()
             }
-            Sauce.usersLiked.push(req.params.id)
-            Sauce.likes = Sauce.dislikes.length
         }
-    }
+
+        if (req.body.like === -1) {
+            console.log("ID du disliker : ", likeID)
+            if (sauce.usersDisliked.includes(likeID)) {
+                console.log('a déjà disliké')
+                let index = sauce.usersDisliked.findIndex(id => id === likeID)
+                sauce.usersDisliked.splice(index, 1)
+                sauce.dislikes --
+                console.log('Annulation du dislike, IDs des dislikers restants : ', sauce.usersDisliked, 'nombre de dislikes : ', sauce.dislikes)
+                sauce.save()
+            } else {
+                sauce.usersDisliked.push(likeID)
+                sauce.dislikes ++
+                console.log('ajout du dislike, IDs des dislikers : ', sauce.usersDisliked, 'nombre de dislikes : ', sauce.dislikes)
+                sauce.save()
+            }
+        }
+    })
+    .catch((error) => res.status(404).json({ error }));
 }
-/* NOTES DE TRAVAIL
-if (req.body.like === 1) {
-    est-ce que la personne a déjà liké
-        oui { alert elle ne peut pas reliker
-            return }
-        non { est-ce que la personne a disliké}
-            oui { suppression du dislike id
-                quantité dislikes = usersDisliked.length}
-            ajout du l'id dans array
-            ajout du like quantité
-}
-
-if (req.body.like === -1) {
-    est-ce que déjà dislike ? {
-        oui {elle ne peut pas re disliker
-            return}
-        non { est-ce que la personne est dans les likes}
-            oui { suppression du dislike
-                }
-    }
-}
-
-if (req.body.like === 0) {
-    Est-ce qu'il y a un like ?
-        oui { suppression du like }
-        non { est-ce qu'il y a un dislike ? }
-            oui { suppression du dislike }
-            non { alert la sauce est déjà à 0}
-}
-
-
-.push('_id')
-total = total d'id donc .length
-    }
-}*/
-
-
-
