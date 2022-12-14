@@ -1,7 +1,3 @@
-/**
- * @todo ajouter signalement d'erreur si uniqueValidator false ?
- */
-
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 

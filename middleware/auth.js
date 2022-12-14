@@ -1,7 +1,3 @@
-/**
- * @todo remplacer token par soite numérique aléatoire dans .env
- */
-
 const jwt = require('jsonwebtoken');
 
 /**

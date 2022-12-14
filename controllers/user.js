@@ -1,7 +1,3 @@
-/**
- * @todo remplacer token par une chaine aléatoire
- */
-
 const brcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
 require('dotenv').config();

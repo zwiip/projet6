@@ -52,7 +52,8 @@ exports.createSauce = (req, res, next) => {
  * Met à jour la sauce avec l'_id fourni.
  * Si une image est téléchargée, elle est capturée et l’imageUrl de la sauce est mise à jour.
  * Si aucun fichier n'est fourni, les informations sur la sauce se trouvent directement dans le corps de la requête.
- * Si un fichier est fourni, la sauce transformée en chaîne de caractères se trouve dans req.body.sauce. 
+ * Si un fichier est fourni, la sauce transformée en chaîne de caractères se trouve dans req.body.sauce.
+ * Une condition permet de s'assurer que seul le propriétaire de la sauce peut apporter des modifs à celle-ci 
  * @param {EITHER Sauce.JSON OR { sauce: String, image: File }} req 
  * @param { message: String } res 
  * @param {*} next 
@@ -66,7 +67,6 @@ exports.modifySauce = (req, res, next) => {
     delete sauceObject._userId;
     Sauce.findOne({ _id: req.params.id })
         .then((sauce) => {
-            // permet de s'assurer que seul le propriétaire de la sauce peut apportder des modifs à celle-ci
             if (sauce.userId != req.auth.userId) {
                 res.status(403).json({ message: 'unauthorized request' })
             } else {
@@ -120,7 +120,7 @@ exports.likeSauce = (req, res, next) => {
     .then(sauce => {
         const likeID = req.body.userId
         res.status(200).json(sauce);
-        
+
         if (req.body.like === 1) {
             console.log("ID du liker : ", likeID)
             if (sauce.usersLiked.includes(likeID)) {
