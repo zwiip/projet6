@@ -59,27 +59,43 @@ exports.createSauce = (req, res, next) => {
  * @param {*} next 
  */
 exports.modifySauce = (req, res, next) => {
-    const sauceObject = req.file ? {
-        ...JSON.parse(req.body.sauce),
-        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-    } : { ...req.body };
-
-    delete sauceObject._userId;
     Sauce.findOne({ _id: req.params.id })
         .then((sauce) => {
             if (sauce.userId != req.auth.userId) {
                 res.status(403).json({ message: 'unauthorized request' })
             } else {
-                Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
+                console.log('user ok')
+                if (req.file) {
+                    console.log('il y a une image')
+                    const filename = sauce.imageUrl.split("/images/")[1];
+                    fs.unlink(`images/${filename}`, () => {
+                        console.log("suppression de l'ancienne image et ajout de la nouvelle")
+                        const sauceObjectWithImg = {
+                            ...JSON.parse(req.body.sauce),
+                            imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+                        }
+                        Sauce.updateOne({ _id: req.params.id }, { ...sauceObjectWithImg, _id: req.params.id })
+                        .then(() => res.status(200).json({ message: 'Sauce modifiée !' }))
+                        .catch(error => res.status(401).json({ error }))
+                    })
+                } else {
+                    console.log("il n'y a pas d'image")
+                    const sauceObject = { ...req.body }
+                    Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
                     .then(() => res.status(200).json({ message: 'Sauce modifiée !' }))
                     .catch(error => res.status(401).json({ error }))
-            }
-        })
+                }
+        }})
         .catch((error) => {
             res.status(400).json({ error })
         })
 };
-
+/* Sauce.findOne
+        if user ok
+        if req.file
+            true fs.unlink
+                .then updateOne
+*/
 /**
  * Supprime la sauce avec l'_id fourni et retire l'image du dossier images
  * @param {-} req 
