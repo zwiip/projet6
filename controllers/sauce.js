@@ -75,27 +75,23 @@ exports.modifySauce = (req, res, next) => {
                             imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
                         }
                         Sauce.updateOne({ _id: req.params.id }, { ...sauceObjectWithImg, _id: req.params.id })
-                        .then(() => res.status(200).json({ message: 'Sauce modifiée !' }))
-                        .catch(error => res.status(401).json({ error }))
+                            .then(() => res.status(200).json({ message: 'Sauce modifiée !' }))
+                            .catch(error => res.status(401).json({ error }))
                     })
                 } else {
                     console.log("il n'y a pas d'image")
                     const sauceObject = { ...req.body }
                     Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
-                    .then(() => res.status(200).json({ message: 'Sauce modifiée !' }))
-                    .catch(error => res.status(401).json({ error }))
+                        .then(() => res.status(200).json({ message: 'Sauce modifiée !' }))
+                        .catch(error => res.status(401).json({ error }))
                 }
-        }})
+            }
+        })
         .catch((error) => {
             res.status(400).json({ error })
         })
 };
-/* Sauce.findOne
-        if user ok
-        if req.file
-            true fs.unlink
-                .then updateOne
-*/
+
 /**
  * Supprime la sauce avec l'_id fourni et retire l'image du dossier images
  * @param {-} req 
@@ -133,43 +129,46 @@ exports.deleteSauce = (req, res, next) => {
  */
 exports.likeSauce = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id })
-    .then(sauce => {
-        const likeID = req.body.userId
-        res.status(200).json(sauce);
+        .then(sauce => {
+            const likerID = req.body.userId
+            res.status(200).json(sauce);
 
-        if (req.body.like === 1) {
-            console.log("ID du liker : ", likeID)
-            if (sauce.usersLiked.includes(likeID)) {
-                console.log('a déjà liké')
-                let index = sauce.usersLiked.findIndex(id => id === likeID)
-                sauce.usersLiked.splice(index, 1)
-                sauce.likes --
-                console.log('Annulation du like, IDs des likers restants : ', sauce.usersLiked, 'nombre de likes', sauce.likes)
+            if (req.body.like === 1) {
+                console.log(req.body.like, " : c'est un like")
+                console.log("ID du liker, pas encore liké : ", likerID)
+                sauce.usersLiked.push(likerID)
+                sauce.likes++
                 sauce.save()
-            } else {
-                sauce.usersLiked.push(likeID)
-                sauce.likes ++
-                console.log('ajout du like, IDs des likers : ', sauce.usersLiked, 'nombre de likes : ', sauce.likes)
+                console.log('ajout du like, tableau des likers : ', sauce.usersLiked, 'total de likes : ', sauce.likes)
+            }
+
+            if (req.body.like === 0) {
+                console.log(req.body.like, " : c'est une annulation")
+                if (sauce.usersLiked.includes(likerID)) {
+                    console.log("ID ", likerID, ' a déjà liké')
+                    let index = sauce.usersLiked.findIndex(id => id === likerID)
+                    sauce.usersLiked.splice(index, 1)
+                    sauce.likes--
+                    sauce.save()
+                    console.log('Annulation du like, tableau des likers restants : ', sauce.usersLiked, 'total de likes', sauce.likes)
+                } else if (sauce.usersDisliked.includes(likerID)) {
+                    console.log("ID ", likerID, ' a déjà disliké')
+                    let index = sauce.usersDisliked.findIndex(id => id === likerID)
+                    sauce.usersDisliked.splice(index, 1)
+                    sauce.dislikes--
+                    console.log('Annulation du dislike, tableau des dislikers restants : ', sauce.usersDisliked, 'total de dislikes : ', sauce.dislikes)
+                    sauce.save()
+                }
+            }
+
+            if (req.body.like === -1) {
+                console.log(req.body.like, " : c'est un dislike")
+                console.log("ID ", likerID, " pas encore disliké")
+                sauce.usersDisliked.push(likerID)
+                sauce.dislikes++
+                console.log('ajout du dislike, tableau des dislikers : ', sauce.usersDisliked, 'total de dislikes : ', sauce.dislikes)
                 sauce.save()
             }
-        }
-
-        if (req.body.like === -1) {
-            console.log("ID du disliker : ", likeID)
-            if (sauce.usersDisliked.includes(likeID)) {
-                console.log('a déjà disliké')
-                let index = sauce.usersDisliked.findIndex(id => id === likeID)
-                sauce.usersDisliked.splice(index, 1)
-                sauce.dislikes --
-                console.log('Annulation du dislike, IDs des dislikers restants : ', sauce.usersDisliked, 'nombre de dislikes : ', sauce.dislikes)
-                sauce.save()
-            } else {
-                sauce.usersDisliked.push(likeID)
-                sauce.dislikes ++
-                console.log('ajout du dislike, IDs des dislikers : ', sauce.usersDisliked, 'nombre de dislikes : ', sauce.dislikes)
-                sauce.save()
-            }
-        }
-    })
-    .catch((error) => res.status(404).json({ error }));
+        })
+        .catch((error) => res.status(404).json({error: "erreur avec le findOne", error }));
 }
