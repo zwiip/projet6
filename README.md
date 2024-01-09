@@ -20,8 +20,11 @@ Développer le back-end de l’application en apportant une attention particuli�
 - Github
 ### Installation du projet
 - Vous aurez besoin du Front-end ici : https://github.com/OpenClassrooms-Student-Center/Web-Developer-P6
-
-- git clone https://github.com/zwiip/projet6
-- npm install
-- npm start
-- le projet devrait démarrer sur le port 3000 et s'afficher dans votre navigateur, sinon tapez http://localhost:3000/
+- Récupérer le back : git clone https://github.com/zwiip/projet6
+- Depuis le back :
+  - installez les dépendances : npm install
+  - Démarrez le serveur backend avec Nodemon
+- Depuis le front : 
+  - installez les dépendances : npm start
+  - lancez l'application : npm start
+  - le projet devrait démarrer sur le port 4200 et s'afficher dans votre navigateur, sinon tapez http://localhost:4200/
